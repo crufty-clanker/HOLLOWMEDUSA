@@ -1,0 +1,47 @@
+name: Version Bump
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'New version (e.g., 1.2.0)'
+        required: true
+      part:
+        description: 'Version part to bump'
+        required: false
+        default: 'patch'
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Get current version
+        id: current
+        run: |
+          BACKEND_VERSION=$(grep 'version' backend/pyproject.toml | head -1 | cut -d'"' -f2)
+          FRONTEND_VERSION=$(grep '"version"' frontend/package.json | cut -d'"' -f4)
+          echo "backend_version=$BACKEND_VERSION" >> $GITHUB_OUTPUT
+          echo "frontend_version=$FRONTEND_VERSION" >> $GITHUB_OUTPUT
+      
+      - name: Bump versions
+        run: |
+          NEW_VERSION="${{ inputs.version }}"
+          sed -i "s/version = \".*\"/version = \"$NEW_VERSION\"/" backend/pyproject.toml
+          sed -i "s/\"version\": \".*\"/\"version\": \"$NEW_VERSION\"/" frontend/package.json
+      
+      - name: Create commit
+        run: |
+          git config user.name "Version Bot"
+          git config user.email "bot@hollowmedusa.dev"
+          git add backend/pyproject.toml frontend/package.json
+          git commit -m "chore: bump version to ${{ inputs.version }}"
+          git push

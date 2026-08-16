@@ -2,15 +2,21 @@ export type StepStatus = 'pending' | 'running' | 'succeeded' | 'failed' | 'skipp
 export type RunStatus = 'pending' | 'running' | 'completed' | 'failed' | 'stopped'
 
 export interface PipelineState {
-  requirements?: Record<string, any>
-  architecture?: Record<string, any>
+  requirements?: Record<string, unknown>
+  architecture?: Record<string, unknown>
   prompts: Record<string, string>
   code: Record<string, string>
-  test_results: any[]
-  review?: Record<string, any>
+  test_results: TestResult[]
+  review?: Record<string, unknown>
   documentation?: string
   errors: string[]
-  metadata: Record<string, any>
+  metadata: Record<string, unknown>
+}
+
+export interface TestResult {
+  criterion: string
+  passed: boolean
+  message?: string
 }
 
 export interface AgentConfig {
@@ -47,4 +53,11 @@ export interface Run {
   state: PipelineState
   created_at: string
   updated_at: string
+}
+
+export interface StepResult {
+  step: string
+  status: StepStatus
+  output?: unknown
+  error?: string
 }

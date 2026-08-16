@@ -7,7 +7,7 @@ import sys
 def fix_libstdc():
     """Find and preload libstdc++.so.6 from Nix store."""
     nix_store = "/nix/store"
-    for root, dirs, files in os.walk(nix_store):
+    for root, _dirs, files in os.walk(nix_store):
         if "libstdc++.so.6" in files:
             lib_path = os.path.join(root, "libstdc++.so.6")
             os.environ["LD_PRELOAD"] = lib_path

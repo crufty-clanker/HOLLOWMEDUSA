@@ -1,4 +1,5 @@
 import ReactFlow, {
+  type Connection,
   addEdge,
   Background,
   Controls,
@@ -25,7 +26,7 @@ export default function GraphEditor() {
   const [nodes, , onNodesChange] = useNodesState(initialNodes)
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
 
-  const onConnect = (params: any) => setEdges((eds) => addEdge(params, eds))
+  const onConnect = (params: Connection) => setEdges((eds) => addEdge(params, eds))
 
   return (
     <div className="h-[calc(100vh-12rem)] bg-white rounded-lg border border-gray-200">

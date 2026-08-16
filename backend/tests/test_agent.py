@@ -1,9 +1,10 @@
 import asyncio
 from unittest.mock import AsyncMock, MagicMock
+
+from hollowmedusa.config.agent_config import AgentConfig
 from hollowmedusa.engine.agent import Agent
 from hollowmedusa.engine.harness import Harness
 from hollowmedusa.engine.model_client import ModelClient
-from hollowmedusa.config.agent_config import AgentConfig
 
 
 def test_agent_execution():

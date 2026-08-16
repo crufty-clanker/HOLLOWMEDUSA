@@ -1,7 +1,8 @@
 import { useState } from 'react'
+import type { Run } from '../types/api'
 
 export default function Dashboard() {
-  const [runs] = useState<any[]>([])
+  const [runs] = useState<Run[]>([])
 
   return (
     <div className="space-y-6">
@@ -17,8 +18,8 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <StatCard label="Total Runs" value={runs.length} />
-        <StatCard label="Successful" value={runs.filter((r: any) => r.status === 'completed').length} />
-        <StatCard label="Failed" value={runs.filter((r: any) => r.status === 'failed').length} />
+        <StatCard label="Successful" value={runs.filter((r) => r.status === 'completed').length} />
+        <StatCard label="Failed" value={runs.filter((r) => r.status === 'failed').length} />
       </div>
 
       <div className="bg-white rounded-lg border border-gray-200 p-4">
@@ -27,7 +28,7 @@ export default function Dashboard() {
           <p className="text-gray-500">No runs yet. Start a new pipeline run!</p>
         ) : (
           <div className="space-y-2">
-            {runs.map((run: any) => (
+            {runs.map((run) => (
               <div key={run.id} className="flex items-center justify-between p-3 bg-gray-50 rounded">
                 <div>
                   <p className="font-medium">{run.id}</p>

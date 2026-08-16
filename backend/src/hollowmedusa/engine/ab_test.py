@@ -1,5 +1,4 @@
 """A/B testing runner for prompt variants."""
-from typing import Any
 
 
 class ABTestRunner:

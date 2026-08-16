@@ -1,18 +1,7 @@
-"""Theme context for dark mode support."""
-from typing import Literal
-import {createContext, useContext, useState, useCallback} from 'react'
+import {useState, useCallback} from 'react'
+import {ThemeContext} from './theme-context'
 
 type Theme = 'light' | 'dark'
-
-interface ThemeContextValue {
-  theme: Theme
-  toggleTheme: () => void
-}
-
-export const ThemeContext = createContext<ThemeContextValue>({
-  theme: 'light',
-  toggleTheme: () => {},
-})
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>('light')
@@ -30,8 +19,4 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       {children}
     </ThemeContext.Provider>
   )
-}
-
-export function useTheme() {
-  return useContext(ThemeContext)
 }

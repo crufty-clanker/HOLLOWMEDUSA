@@ -1,6 +1,7 @@
 """Webhook handler for CI/CD triggers."""
-from fastapi import APIRouter, Request, HTTPException
 from typing import Any
+
+from fastapi import APIRouter, HTTPException, Request
 
 router = APIRouter()
 

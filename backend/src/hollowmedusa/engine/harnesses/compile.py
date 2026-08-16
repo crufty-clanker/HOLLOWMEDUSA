@@ -24,13 +24,14 @@ class CompileHarness(Harness):
 
     def _substitute_variables(self, template: str, data: dict) -> str:
         """Replace {{variable}} placeholders with values from data."""
+
         def replace_match(match):
             var_name = match.group(1)
             # Check nested data
             if var_name in data:
                 return str(data[var_name])
             # Check nested dict access: {{architecture.goal}}
-            parts = var_name.split('.')
+            parts = var_name.split(".")
             current = data
             for part in parts:
                 if isinstance(current, dict) and part in current:
@@ -39,7 +40,7 @@ class CompileHarness(Harness):
                     return match.group(0)  # Leave unchanged
             return str(current)
 
-        return re.sub(r'\{\{(\w+(?:\.\w+)*)\}\}', replace_match, template)
+        return re.sub(r"\{\{(\w+(?:\.\w+)*)\}\}", replace_match, template)
 
     def validate(self, output: Any) -> list[str]:
         errors = []
@@ -49,7 +50,7 @@ class CompileHarness(Harness):
 
         # Check for unresolved variables
         for node_id, prompt in output.items():
-            unresolved = re.findall(r'\{\{(\w+)\}\}', prompt)
+            unresolved = re.findall(r"\{\{(\w+)\}\}", prompt)
             if unresolved:
                 errors.append(f"Node {node_id}: unresolved variables {unresolved}")
 

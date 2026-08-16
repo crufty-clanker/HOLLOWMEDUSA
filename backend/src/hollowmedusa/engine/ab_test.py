@@ -14,9 +14,7 @@ class ABTestRunner:
         # TODO: Implement variant execution with specific config
         return {"variant_id": variant_id, "status": "simulated"}
 
-    async def compare_variants(
-        self, variant_a: str, variant_b: str, input_data: dict
-    ) -> dict:
+    async def compare_variants(self, variant_a: str, variant_b: str, input_data: dict) -> dict:
         """Run both variants and compare results."""
         result_a = await self.run_variant(variant_a, input_data)
         result_b = await self.run_variant(variant_b, input_data)

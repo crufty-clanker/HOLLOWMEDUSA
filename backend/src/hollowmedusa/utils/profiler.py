@@ -1,4 +1,5 @@
 """Performance profiling utilities."""
+
 import time
 from collections.abc import Callable
 from functools import wraps

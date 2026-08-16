@@ -17,7 +17,7 @@ class CodeHarness(Harness):
 
         # Extract code blocks if wrapped in markdown
         if "```" in code:
-            code = re.search(r'```(?:python)?\n(.*?)```', code, re.DOTALL)
+            code = re.search(r"```(?:python)?\n(.*?)```", code, re.DOTALL)
             code = code.group(1) if code else code
 
         return HarnessResult(success=True, output=code.strip())

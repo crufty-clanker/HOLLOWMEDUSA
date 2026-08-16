@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 
 class StepResult(BaseModel):
     """Result from a single pipeline step."""
+
     step: str
     status: str  # "succeeded", "failed", "skipped"
     output: Any = None

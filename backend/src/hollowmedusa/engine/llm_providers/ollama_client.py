@@ -11,7 +11,9 @@ class OllamaClient(ModelClient):
     def __init__(self, api_key: str | None = None, base_url: str | None = None):
         from ollama import AsyncClient
 
-        self.client = AsyncClient(host=base_url or os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"))
+        self.client = AsyncClient(
+            host=base_url or os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+        )
 
     async def generate(self, prompt: str, system_prompt: str, **kwargs) -> LLMResponse:
         response = await self.client.generate(

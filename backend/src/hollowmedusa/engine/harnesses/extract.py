@@ -23,10 +23,10 @@ class ExtractHarness(Harness):
 
         # Fallback: extract key-value pairs from text
         parsed = {}
-        for line in text.split('\n'):
+        for line in text.split("\n"):
             line = line.strip()
-            if ':' in line and not line.startswith('#'):
-                key, _, value = line.partition(':')
+            if ":" in line and not line.startswith("#"):
+                key, _, value = line.partition(":")
                 key = key.strip()
                 value = value.strip()
                 if key and value:

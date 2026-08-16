@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 @dataclass
 class ContextConfig:
     """Configuration for a named context collection."""
+
     id: str
     name: str
     description: str = ""

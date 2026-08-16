@@ -1,4 +1,5 @@
 """Fix NixOS libstdc++.so.6 issue for async SQLAlchemy tests."""
+
 import os
 import subprocess
 import sys

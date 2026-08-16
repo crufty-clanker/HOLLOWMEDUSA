@@ -35,6 +35,7 @@ class PipelineRunner:
         for agent_config in self.agent_registry.list_agents():
             # Find matching harness
             from . import harnesses
+
             harness_cls = getattr(harnesses, f"{agent_config.harness.capitalize()}Harness", None)
             if not harness_cls:
                 raise ValueError(f"Unknown harness: {agent_config.harness}")

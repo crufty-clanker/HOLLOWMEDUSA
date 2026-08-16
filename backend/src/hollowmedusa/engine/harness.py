@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 class HarnessResult(BaseModel):
     """Result from running a harness."""
+
     success: bool
     output: Any = None
     error: str | None = None

@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 @dataclass
 class AgentConfig:
     """Configuration for a single agent."""
+
     id: str
     step: str
     harness: str
@@ -18,6 +19,7 @@ class AgentConfig:
 @dataclass
 class ModelConfig:
     """Configuration for an LLM model/provider."""
+
     id: str
     provider: str  # "openai", "anthropic", "ollama"
     model_name: str
@@ -30,6 +32,7 @@ class ModelConfig:
 @dataclass
 class ContextConfig:
     """Configuration for a named context collection."""
+
     id: str
     name: str
     description: str = ""

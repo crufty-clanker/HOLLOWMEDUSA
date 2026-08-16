@@ -29,7 +29,7 @@ class DocHarness(Harness):
             errors.append("Documentation is empty")
 
         # Check for basic markdown structure
-        if not any(output.startswith(marker) for marker in ['#', '##', '-']):
+        if not any(output.startswith(marker) for marker in ["#", "##", "-"]):
             errors.append("Documentation should start with a heading or list")
 
         return errors

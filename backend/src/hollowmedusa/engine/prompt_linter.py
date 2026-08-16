@@ -28,7 +28,7 @@ class PromptLinter:
         # Check for undefined variables
         if variables:
             defined_vars = set(variables)
-            found_vars = re.findall(r'\{\{(\w+)\}\}', prompt)
+            found_vars = re.findall(r"\{\{(\w+)\}\}", prompt)
             for var in found_vars:
                 if var not in defined_vars:
                     self.errors.append(f"Undefined variable: {{{{ {var} }}}}")

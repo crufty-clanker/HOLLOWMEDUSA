@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 class LLMResponse(BaseModel):
     """Response from an LLM provider."""
+
     content: str
     model: str
     usage: dict = {}

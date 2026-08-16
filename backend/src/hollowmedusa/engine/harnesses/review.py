@@ -24,11 +24,7 @@ class ReviewHarness(Harness):
         current_content: list[str] = []
 
         def _clean_lines(items: list[str]) -> list[str]:
-            return [
-                item.strip().lstrip("- ").strip()
-                for item in items
-                if item.strip()
-            ]
+            return [item.strip().lstrip("- ").strip() for item in items if item.strip()]
 
         for line in lines:
             stripped = line.strip()

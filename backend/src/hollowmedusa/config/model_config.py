@@ -6,6 +6,7 @@ from dataclasses import dataclass
 @dataclass
 class ModelConfig:
     """Configuration for an LLM model/provider."""
+
     id: str
     provider: str  # "openai", "anthropic", "ollama"
     model_name: str

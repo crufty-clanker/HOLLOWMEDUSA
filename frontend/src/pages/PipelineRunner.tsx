@@ -3,6 +3,7 @@ import type { Run, StepResult } from '../types/api'
 
 export default function PipelineRunner() {
   const [run, setRun] = useState<Run | null>(null)
+  const [stepResults, setStepResults] = useState<StepResult[]>([])
   const [status, setStatus] = useState<'idle' | 'running' | 'paused' | 'completed' | 'stopped'>('idle')
   const wsRef = useRef<WebSocket | null>(null)
 
@@ -27,7 +28,9 @@ export default function PipelineRunner() {
     wsRef.current = ws
     ws.onmessage = (e) => {
       const event = JSON.parse(e.data)
-      setRun((prev) => ({ ...prev, step_results: event.step_results }))
+      if (event.step_results) {
+        setStepResults(event.step_results)
+      }
     }
   }
 
@@ -67,7 +70,7 @@ export default function PipelineRunner() {
             <span className="font-medium">Running: {run?.id}</span>
           </div>
           <div className="space-y-2">
-            {run?.step_results?.map((step: StepResult, idx: number) => (
+            {stepResults.map((step: StepResult, idx: number) => (
               <div key={idx} className="flex items-center gap-2 p-2 bg-gray-50 rounded">
                 <span className={`w-2 h-2 rounded-full ${
                   step.status === 'succeeded' ? 'bg-green-500' :

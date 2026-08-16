@@ -23,7 +23,7 @@ services:
       - backend
 
   postgres:
-    image: postgres:16
+    image: postgres:17
     environment:
       - POSTGRES_DB=hollowmedusa
       - POSTGRES_USER=user

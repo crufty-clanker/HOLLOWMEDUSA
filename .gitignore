@@ -13,7 +13,6 @@ backend/.env
 node_modules/
 dist/
 .vite/
-frontend/pnpm-lock.yaml
 
 # IDE
 .idea/

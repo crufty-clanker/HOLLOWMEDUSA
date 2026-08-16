@@ -1,0 +1,6 @@
+# Frontend build artifacts
+dist/
+.vite/
+
+# Dependencies
+node_modules/

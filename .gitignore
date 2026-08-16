@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+.hypothesis/
+.pytest_cache/
+*.db
+*.egg-info/
+backend/.env
+
+# Node
+node_modules/
+dist/
+.vite/
+frontend/pnpm-lock.yaml
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env

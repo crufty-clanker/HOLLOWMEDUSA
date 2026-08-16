@@ -50,10 +50,12 @@ async def db_engine(db_path):
 @pytest.fixture(scope="session")
 def client(db_engine):
     """Test client with overridden database dependency."""
-    TestSession = async_sessionmaker(db_engine, class_=AsyncSession, expire_on_commit=False)
+    test_session_factory = async_sessionmaker(
+        db_engine, class_=AsyncSession, expire_on_commit=False
+    )
 
     async def override_get_db():
-        async with TestSession() as session:
+        async with test_session_factory() as session:
             yield session
 
     app.dependency_overrides[get_db] = override_get_db
@@ -67,7 +69,9 @@ def client(db_engine):
 @pytest.fixture(scope="session")
 def db_session(db_engine):
     """Provide an async session for repository tests."""
-    TestSession = async_sessionmaker(db_engine, class_=AsyncSession, expire_on_commit=False)
-    session = TestSession()
+    test_session_factory = async_sessionmaker(
+        db_engine, class_=AsyncSession, expire_on_commit=False
+    )
+    session = test_session_factory()
     yield session
     # Don't close — engine is still in use

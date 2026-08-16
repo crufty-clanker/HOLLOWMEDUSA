@@ -8,7 +8,10 @@ async def test_update_agent(client, db_session):
     from hollowmedusa.storage.repositories.agent_repository import AgentRepository
 
     repo = AgentRepository(db_session)
-    await repo.create("test-agent", {"system_prompt": "test", "primary_model": "openai/gpt-4o-mini"})
+    await repo.create(
+        "test-agent",
+        {"system_prompt": "test", "primary_model": "openai/gpt-4o-mini"},
+    )
 
     resp = client.put("/api/v1/agents/test-agent", json={"system_prompt": "updated"})
     assert resp.status_code == 200

@@ -11,7 +11,7 @@ def test_update_graph(client, db_session):
     }
     resp = client.put("/api/v1/graph/", json={"topology": topology})
     assert resp.status_code == 200
-    assert resp.json()["status"] == "saved"
+    assert resp.json()["topology"] == topology
 
     # Verify it was saved
     resp = client.get("/api/v1/graph/")

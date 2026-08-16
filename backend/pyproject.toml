@@ -19,7 +19,7 @@ dependencies = [
     "python-jose[cryptography]>=3.3",
     "passlib[bcrypt]>=1.7",
     "python-multipart>=0.0.32",
-    "structlog>=24.4",
+    "structlog>=26.1.0",
 ]
 
 [project.optional-dependencies]

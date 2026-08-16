@@ -773,6 +773,106 @@ print('✅ PromptLinter works')
 
 ---
 
+## 1.11 — Unit Tests
+
+**Files:**
+- `backend/tests/test_harnesses.py` — Test all 8 harnesses
+- `backend/tests/test_agent.py` — Test Agent with mocked LLM
+- `backend/tests/test_pipeline_runner.py` — Test full pipeline execution
+- `backend/tests/test_prompt_linter.py` — Test prompt validation
+
+**Test harnesses:**
+```python
+# backend/tests/test_harnesses.py
+from hollowmedusa.engine.harnesses.extract import ExtractHarness
+from hollowmedusa.engine.harnesses.topology import TopologyHarness
+from hollowmedusa.engine.harnesses.compile import CompileHarness
+
+def test_extract_harness():
+    harness = ExtractHarness()
+    result = harness.run({"text": "goal: build app"})
+    assert result.success
+    assert result.output["goal"] == "build app"
+
+def test_topology_harness_no_cycles():
+    harness = TopologyHarness()
+    graph = {"nodes": [{"id": "a"}, {"id": "b"}], "edges": [{"source": "a", "target": "b"}]}
+    result = harness.run({"graph": graph})
+    assert harness.validate(result.output) == []
+
+def test_compile_harness_substitution():
+    harness = CompileHarness()
+    result = harness.run({"prompts": {"node1": "You are a {{role}}"}, "role": "analyst"})
+    assert result.output["node1"] == "You are an analyst"
+```
+
+**Test agent:**
+```python
+# backend/tests/test_agent.py
+import asyncio
+from unittest.mock import AsyncMock, MagicMock
+from hollowmedusa.engine.agent import Agent
+from hollowmedusa.engine.harness import Harness
+from hollowmedusa.engine.model_client import ModelClient
+
+def test_agent_execution():
+    harness = MagicMock(spec=Harness)
+    harness.run.return_value = MagicMock(success=True, output={"test": "data"}, validation_errors=[])
+    harness.validate.return_value = []
+
+    model_client = AsyncMock(spec=ModelClient)
+    model_client.generate.return_value = MagicMock(content="test output")
+
+    agent = Agent(config, harness, model_client)
+    result = asyncio.run(agent.execute({"input": "test"}))
+    assert result.success
+```
+
+**Test pipeline runner:**
+```python
+# backend/tests/test_pipeline_runner.py
+import asyncio
+from hollowmedusa.engine.pipeline_runner import PipelineRunner
+from hollowmedusa.models.state import PipelineState
+
+def test_pipeline_runner():
+    runner = PipelineRunner(agent_registry, model_registry, context_manager)
+    runner.build_agents()
+
+    state = PipelineState()
+    graph = {"test_req": {"depends_on": []}}
+    result_state = asyncio.run(runner.run(state, graph))
+    assert len(result_state.step_results) == 1
+    assert result_state.errors == []
+```
+
+**Test prompt linter:**
+```python
+# backend/tests/test_prompt_linter.py
+from hollowmedusa.engine.prompt_linter import PromptLinter
+
+def test_prompt_linter_empty():
+    linter = PromptLinter()
+    errors = linter.lint("")
+    assert len(errors) == 1
+    assert "empty" in errors[0].lower()
+
+def test_prompt_linter_undefined_var():
+    linter = PromptLinter()
+    errors = linter.lint("Use {{undefined_var}}", ["defined_var"])
+    assert len(errors) == 1
+    assert "undefined" in errors[0].lower()
+```
+
+**Verification:**
+```bash
+cd backend && source .venv/bin/activate
+pytest tests/ -v
+# Should see: 4 passed
+```
+
+---
+
 ## Checklist
 
 - [ ] `1.1` PipelineState defined and tested
@@ -785,6 +885,7 @@ print('✅ PromptLinter works')
 - [ ] `1.8` ContextManager with file loading
 - [ ] `1.9` PipelineRunner with topological execution
 - [ ] `1.10` PromptLinter with validation rules
+- [ ] `1.11` Unit tests for all components
 
 ## Deliverable
 
@@ -793,4 +894,11 @@ CLI tool that can run a full pipeline end-to-end:
 ```bash
 cd backend && source .venv/bin/activate
 python -m hollowmedusa.cli run --config config/pipeline.yaml
+```
+
+## CI Update
+
+Add to `.github/workflows/ci.yml`:
+```yaml
+- run: cd backend && pytest tests/
 ```

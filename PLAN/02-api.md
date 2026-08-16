@@ -678,6 +678,112 @@ print('✅ 2.13 Auth middleware works')
 
 ---
 
+## 2.15 — Integration Tests
+
+**Files:**
+- `backend/tests/test_api_runs.py` — Test run CRUD endpoints
+- `backend/tests/test_api_agents.py` — Test agent management
+- `backend/tests/test_api_models.py` — Test model config
+- `backend/tests/test_api_contexts.py` — Test context CRUD
+- `backend/tests/test_api_graph.py` — Test graph topology
+- `backend/tests/test_websocket.py` — Test WebSocket events
+- `backend/tests/conftest.py` — Test fixtures (async DB, test client)
+
+**Test fixtures:**
+```python
+# backend/tests/conftest.py
+import pytest
+import pytest_asyncio
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from hollowmedusa.storage.database import Base, async_session
+
+@pytest_asyncio.fixture
+async def db_session():
+    engine = create_async_engine("sqlite+aiosqlite:///:memory:")
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    async with AsyncSession(engine) as session:
+        yield session
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
+
+@pytest.fixture
+def test_client(db_session):
+    from fastapi.testclient import TestClient
+    from hollowmedusa.api.main import app
+    # Override DB dependency
+    app.dependency_overrides[get_db] = lambda: db_session
+    return TestClient(app)
+```
+
+**Test runs:**
+```python
+# backend/tests/test_api_runs.py
+from fastapi.testclient import TestClient
+
+def test_create_run(test_client):
+    resp = test_client.post("/api/v1/runs/", json={"graph_id": "default"})
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "id" in data
+    assert data["status"] == "running"
+
+def test_get_run_not_found(test_client):
+    resp = test_client.get("/api/v1/runs/nonexistent")
+    assert resp.status_code == 404
+
+def test_get_run_trace(test_client, db_session):
+    # Create run first
+    resp = test_client.post("/api/v1/runs/", json={})
+    run_id = resp.json()["id"]
+
+    # Get trace
+    resp = test_client.get(f"/api/v1/runs/{run_id}/trace")
+    assert resp.status_code == 200
+    assert "step_results" in resp.json()
+```
+
+**Test agents:**
+```python
+# backend/tests/test_api_agents.py
+def test_list_agents_empty(test_client):
+    resp = test_client.get("/api/v1/agents/")
+    assert resp.status_code == 200
+    assert resp.json() == []
+
+def test_update_agent(test_client, db_session):
+    # Create agent first
+    from hollowmedusa.storage.repositories.agent_repository import AgentRepository
+    repo = AgentRepository(db_session)
+    await repo.create("test-agent", {"system_prompt": "test", "primary_model": "openai/gpt-4o-mini"})
+
+    # Update via API
+    resp = test_client.put("/api/v1/agents/test-agent", json={"system_prompt": "updated"})
+    assert resp.status_code == 200
+    assert resp.json()["config"]["system_prompt"] == "updated"
+```
+
+**Test WebSocket:**
+```python
+# backend/tests/test_websocket.py
+from fastapi.testclient import TestClient
+
+def test_websocket_ping_pong(test_client):
+    with test_client.websocket_connect("/runs/test-id/events") as ws:
+        ws.send_text("ping")
+        data = ws.receive_text()
+        assert data == "pong"
+```
+
+**Verification:**
+```bash
+cd backend && source .venv/bin/activate
+pytest tests/ -v
+# Should see: 6 passed
+```
+
+---
+
 ## Checklist
 
 - [ ] `2.14` SQLite storage layer with all repositories
@@ -694,17 +800,21 @@ print('✅ 2.13 Auth middleware works')
 - [ ] `2.11` Graph endpoints (GET/PUT /graph)
 - [ ] `2.12` WebSocket: ws://runs/{id}/events
 - [ ] `2.13` Auth middleware (API key + JWT)
+- [ ] `2.15` Integration tests for all endpoints
 
 ## Deliverable
 
-Fully functional REST + WebSocket API with persistence.
+Fully functional REST + WebSocket API with persistence and tests.
 
 ```bash
 cd backend && source .venv/bin/activate
 uvicorn hollowmedusa.api.main:app --reload --port 8000
+pytest tests/ -v
+```
 
-# Test endpoints
-curl http://localhost:8000/api/v1/runs/
-curl http://localhost:8000/api/v1/agents/
-curl http://localhost:8000/api/v1/models/
+## CI Update
+
+Add to `.github/workflows/ci.yml`:
+```yaml
+- run: cd backend && pytest tests/ -v
 ```

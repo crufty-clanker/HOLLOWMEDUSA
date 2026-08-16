@@ -20,7 +20,7 @@ jobs:
       - run: pip install -e ".[dev]"
       - run: ruff check src/ tests/
       - run: ruff format --check src/ tests/
-      - run: pytest tests/
+      - run: pytest tests/ -v
 
   frontend:
     runs-on: ubuntu-latest
@@ -41,3 +41,6 @@ jobs:
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm build
+      - run: pnpm test
+      - run: npx playwright install --with-deps
+      - run: npx playwright test

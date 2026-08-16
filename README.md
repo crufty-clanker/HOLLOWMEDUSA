@@ -68,4 +68,4 @@ docker-compose up -d
 
 ## License
 
-Private.
+This project is licensed as [MIT](LICENSE)
